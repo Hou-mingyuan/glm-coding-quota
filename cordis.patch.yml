@@ -1,0 +1,4 @@
+- insert:
+    - id: glm-coding-quota
+      name: 'glm-coding-quota'
+      config: {}

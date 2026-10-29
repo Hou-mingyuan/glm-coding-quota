@@ -1,0 +1,56 @@
+{
+  "name": "glm-coding-quota",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "GLM Coding Plan quota panel for the DeepSeek Harness composer: 5-hour and weekly credit windows from the BigModel team monitoring API",
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "glm",
+    "zhipu",
+    "bigmodel",
+    "quota",
+    "coding-plan"
+  ],
+  "license": "MIT",
+  "author": "Hou-mingyuan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hou-mingyuan/glm-coding-quota.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hou-mingyuan/glm-coding-quota/issues"
+  },
+  "homepage": "https://github.com/Hou-mingyuan/glm-coding-quota#readme",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/en.json",
+    "locale/zh.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "dsh": ">=0.2.0-rc.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  }
+}
