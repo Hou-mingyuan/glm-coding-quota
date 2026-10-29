@@ -105,7 +105,12 @@ async function fetchQuota(scope) {
 }
 
 export function apply(ctx) {
-  const cfg = (typeof ctx.config === 'object' && ctx.config) || {}
+  // ctx.config may be a guarded property that throws for plugins whose entry
+  // declares no config schema — never let scope resolution kill the routes.
+  let cfg = {}
+  try {
+    if (typeof ctx.config === 'object' && ctx.config) cfg = ctx.config
+  } catch {}
   const fileScope = resolveScopeFromFile()
   const scope = {
     organization: cfg.organization || process.env.BIGMODEL_ORGANIZATION || fileScope.organization,
