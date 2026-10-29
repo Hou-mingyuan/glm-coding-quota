@@ -24,19 +24,29 @@ Then restart DeepSeek Harness. The ring appears next to the model selector in th
 
 ## Configuration
 
-The API key is picked up automatically (env `ZAI_CODING_CN_API_KEY`, or the same key DSH already stores in `~/.dsh/.credentials.yaml` for the GLM provider — no extra setup if you already use GLM models).
+Two values are needed: your BigModel **organization** and **project** IDs (the team quota API answers empty without them). Three ways to provide them, first match wins:
 
-If your account belongs to multiple organizations or projects, pin the scope in your profile's `cordis.patch.yml`:
+**1. Plugin config** — in your profile's `cordis.patch.yml`:
 
 ```yaml
 - id: glm-coding-quota
   name: glm-coding-quota
   config:
-    organization: org-xxxxxxxx   # optional, sent as bigmodel-organization
-    project: proj_xxxxxxxx       # optional, sent as bigmodel-project
+    organization: org-xxxxxxxx
+    project: proj_xxxxxxxx
 ```
 
-Omit both and the API resolves scope from the key alone. Env vars `BIGMODEL_ORGANIZATION` / `BIGMODEL_PROJECT` work too.
+**2. User-level config file** — `~/.dsh/glm-coding-quota.json` (simplest):
+
+```json
+{ "organization": "org-xxxxxxxx", "project": "proj_xxxxxxxx" }
+```
+
+**3. Env vars** — `BIGMODEL_ORGANIZATION` / `BIGMODEL_PROJECT`.
+
+The API key is picked up automatically (env `ZAI_CODING_CN_API_KEY`, or the same key DSH already stores in `~/.dsh/.credentials.yaml` for the GLM provider — no extra setup if you already use GLM models).
+
+Where to find your IDs: the BigModel console (open.bigmodel.cn) — organization & project management pages.
 
 ## Requirements
 

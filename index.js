@@ -26,6 +26,21 @@ function resolveApiKey() {
   return null
 }
 
+// Optional user-level scope config: ~/.dsh/glm-coding-quota.json
+// { "organization": "org-xxx", "project": "proj_xxx" }
+function resolveScopeFromFile() {
+  try {
+    const raw = readFileSync(join(homedir(), '.dsh', 'glm-coding-quota.json'), 'utf8')
+    const cfg = JSON.parse(raw)
+    return {
+      organization: typeof cfg.organization === 'string' ? cfg.organization : '',
+      project: typeof cfg.project === 'string' ? cfg.project : '',
+    }
+  } catch {
+    return { organization: '', project: '' }
+  }
+}
+
 export const name = 'glm-coding-quota'
 export const inject = ['webServer']
 
@@ -67,10 +82,9 @@ async function fetchQuota(scope) {
     authorization: key,
     'accept-encoding': 'identity',
   }
-  // Optional scoping headers: set `organization` / `project` in the plugin
-  // config (profile cordis.patch.yml) or via BIGMODEL_ORGANIZATION /
-  // BIGMODEL_PROJECT env. Omitted when unset — the API then resolves scope
-  // from the key alone.
+  // Scoping headers, REQUIRED for this endpoint: without them the API answers
+  // 200 with an empty data object. Resolved from plugin config, env
+  // (BIGMODEL_ORGANIZATION / BIGMODEL_PROJECT), or ~/.dsh/glm-coding-quota.json.
   if (scope.organization) headers['bigmodel-organization'] = scope.organization
   if (scope.project) headers['bigmodel-project'] = scope.project
   const response = await fetch(API_URL, { headers })
@@ -92,9 +106,10 @@ async function fetchQuota(scope) {
 
 export function apply(ctx) {
   const cfg = (typeof ctx.config === 'object' && ctx.config) || {}
+  const fileScope = resolveScopeFromFile()
   const scope = {
-    organization: cfg.organization || process.env.BIGMODEL_ORGANIZATION || '',
-    project: cfg.project || process.env.BIGMODEL_PROJECT || '',
+    organization: cfg.organization || process.env.BIGMODEL_ORGANIZATION || fileScope.organization,
+    project: cfg.project || process.env.BIGMODEL_PROJECT || fileScope.project,
   }
   let cache = null
   let cacheAt = 0
